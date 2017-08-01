@@ -12,6 +12,7 @@ import * as firebase from 'firebase';
 
 import ListChores from './components/listChores';
 import SignIn from './components/signin';
+import Family from './components/family';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -35,7 +36,8 @@ export default class App extends React.Component {
 
 const ChoreShare = StackNavigator({
   SignIn: {screen: SignIn},
-  ListChores: { screen: ListChores}
+  ListChores: { screen: ListChores},
+  Family: {screen: Family}
 });
 
 const styles = StyleSheet.create({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Navigator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Button } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default class ListChores extends React.Component {
@@ -7,11 +7,12 @@ export default class ListChores extends React.Component {
     title: 'Chores',
   };
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.head}>
           <Text style={styles.header}>Sarah</Text>
-          <Ionicons name="ios-people-outline" size={40} color="rgb(0,206,209)" />
+          <Ionicons name="ios-people-outline" size={40} color="rgb(0,206,209)" onPress={() => navigate('Family')}/>
         </View>
         <ScrollView>
           <View>
