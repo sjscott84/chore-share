@@ -1,8 +1,25 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Button } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Button, ListView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as firebase from 'firebase';
 
 export default class ListChores extends React.Component {
+  constructor(props){
+    super(props)
+    //this.itemsRef = firebase.database().ref();
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2
+      })
+    }
+  }
+
+  componentDidMount() {
+    //this.itemsRef = firebase.database().ref(firebase.auth().currentUser.uid);
+    userId = firebase.auth().currentUser.uid
+    this._listenForItems(firebase.database().ref(userId));
+  }
+
   static navigationOptions = {
     title: 'Chores',
   };
@@ -14,15 +31,33 @@ export default class ListChores extends React.Component {
           <Text style={styles.header}>Sarah</Text>
           <Ionicons name="ios-people-outline" size={40} color="rgb(0,206,209)" onPress={() => navigate('Family')}/>
         </View>
-        <ScrollView>
-          <View>
-            <Chore what="Sweeping" when="Saturday" />
-            <Chore what="Pay Bills" when="Sunday" />
-            <Chore what="Laundry" when="Monday" />
-            <Chore what="Vacuum" when="Monday" />
-          </View>
-        </ScrollView>
+        <ListView dataSource={this.state.dataSource} renderRow={(rowData) => <Chore what={rowData[0]} when={rowData[1]} />}/>
       </View>
+    );
+  }
+
+  _listenForItems(itemsRef) {
+    itemsRef.on('value', (snap) => {
+
+      // get children as an array
+      var items = [];
+      snap.forEach((child) => {
+        console.log(child.val());
+        items.push([child.val().what, child.val().when]);
+        //items.push({
+          //what: child.val().what
+        //});
+      });
+
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(items)
+      });
+    });
+  }
+
+  _renderChore(item) {
+    return (
+      <Chore what="{item.what}" when="{item.when}" />
     );
   }
 }

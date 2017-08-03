@@ -32,27 +32,38 @@ firebase.initializeApp(firebaseConfig);
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      user: null
+    }
   }
 
-  componentDidMount(){
+  componentWillMount(){
     // Listen for authentication state to change.
     firebase.auth().onAuthStateChanged((user) => {
       if (user != null) {
         console.log("We are authenticated now!");
+        this.setState({user: user})
         //this.props.navigation.navigate('ListChores');
       }
     });
   }
 
   render() {
-    return (
-      <RoutesConfig />
-    );
+    if(this.state.user != null){
+      return <AuthRoutes />
+    }
+    return <RoutesConfig />
   }
 }
 
 const RoutesConfig = StackNavigator({
   SignIn: {screen: SignIn},
+  ListChores: { screen: ListChores},
+  Family: {screen: Family},
+  AddChore: {screen: AddChore}
+});
+
+const AuthRoutes = StackNavigator({
   ListChores: { screen: ListChores},
   Family: {screen: Family},
   AddChore: {screen: AddChore}

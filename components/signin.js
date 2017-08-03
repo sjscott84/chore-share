@@ -4,8 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'firebase';
 
 export default class SignIn extends React.Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       email: 's.j.scott84@gmail.com',
       password: 'C228kp3jE'
@@ -32,14 +32,14 @@ export default class SignIn extends React.Component {
     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
     .then(function(user){
       console.log('Successful login');
-      //this.props.navigation.navigate('ListChores');
+      this.props.navigation.navigate('ListChores');
     }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
       // ...
     });
-    this.props.navigation.navigate('ListChores');
+    //this.props.navigation.navigate('ListChores');
   }
 }
 
