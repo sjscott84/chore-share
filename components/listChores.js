@@ -31,22 +31,17 @@ export default class ListChores extends React.Component {
           <Text style={styles.header}>Sarah</Text>
           <Ionicons name="ios-people-outline" size={40} color="rgb(0,206,209)" onPress={() => navigate('Family')}/>
         </View>
-        <ListView dataSource={this.state.dataSource} renderRow={(rowData) => <Chore what={rowData[0]} when={rowData[1]} />}/>
+        <ListView dataSource={this.state.dataSource} renderRow={(rowData) => <Chore what={rowData[0]} when={rowData[1]} key={rowData[2]} />}/>
       </View>
     );
   }
 
   _listenForItems(itemsRef) {
     itemsRef.on('value', (snap) => {
-
       // get children as an array
       var items = [];
       snap.forEach((child) => {
-        console.log(child.val());
-        items.push([child.val().what, child.val().when]);
-        //items.push({
-          //what: child.val().what
-        //});
+        items.push([child.val().what, child.val().when, child.key]);
       });
 
       this.setState({
@@ -54,15 +49,15 @@ export default class ListChores extends React.Component {
       });
     });
   }
-
-  _renderChore(item) {
-    return (
-      <Chore what="{item.what}" when="{item.when}" />
-    );
-  }
 }
 
 class Chore extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      key: this.props.key
+    }
+  }
   render() {
     return (
       <View style={styles.chore}>
