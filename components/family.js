@@ -11,6 +11,7 @@ export default class Family extends React.Component {
     return (
       <View style={styles.container}>
         <Text>Family</Text>
+        <Button onPress={() => this.props.navigation.navigate('AddChore')} title="Add a Chore" />
       </View>
     );
   }

@@ -1,8 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as firebase from 'firebase';
 
 export default class SignIn extends React.Component {
+  constructor(){
+    super();
+    this.state = {
+      email: 's.j.scott84@gmail.com',
+      password: 'C228kp3jE'
+    }
+  };
   static navigationOptions = {
     title: 'Welcome',
   };
@@ -12,14 +20,26 @@ export default class SignIn extends React.Component {
       <View style={styles.container}>
         <Text style={styles.header}>Login to Chore Share</Text>
         <Text style={styles.label}>Email</Text>
-        <TextInput ref='username' style={styles.input} />{/*By default TextInput has no default styling*/}
-        {/*<TextInput ref='username' onFocus={this._inputFocused.bind(this, 'username')} style={styles.input} onChangeText={(text) => this.setState({username: text})} value={this.state.username}/>{/*By default TextInput has no default styling*/}
+        <TextInput ref='email' style={styles.input} onChangeText={(text) => this.setState({email: text})} value={this.state.email}/>
         <Text style={styles.label}>Password</Text>
-        <TextInput ref='username' style={styles.input} />
-        {/*<TextInput ref='password' onFocus={this._inputFocused.bind(this, 'password')}secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({password: text})} value={this.state.password}/>*/}
-        <Button onPress={() => navigate('ListChores')} title="Sign In" />
+        <TextInput ref='password' secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({password: text})} value={this.state.password}/>
+        <Button onPress={this._onPress.bind(this)} title="Sign In" />
       </View>
     );
+  }
+
+  _onPress(){
+    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+    .then(function(user){
+      console.log('Successful login');
+      //this.props.navigation.navigate('ListChores');
+    }).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
+    this.props.navigation.navigate('ListChores');
   }
 }
 

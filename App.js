@@ -6,13 +6,15 @@ import {
   Button
 } from 'react-native';
 import {
-  StackNavigator
+  StackNavigator,
+  NavigationActions
 } from 'react-navigation';
 import * as firebase from 'firebase';
 
 import ListChores from './components/listChores';
 import SignIn from './components/signin';
 import Family from './components/family';
+import AddChore from './components/addChore';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -26,18 +28,34 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount(){
+    // Listen for authentication state to change.
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user != null) {
+        console.log("We are authenticated now!");
+        //this.props.navigation.navigate('ListChores');
+      }
+    });
+  }
+
   render() {
     return (
-      <ChoreShare />
+      <RoutesConfig />
     );
   }
 }
 
-const ChoreShare = StackNavigator({
+const RoutesConfig = StackNavigator({
   SignIn: {screen: SignIn},
   ListChores: { screen: ListChores},
-  Family: {screen: Family}
+  Family: {screen: Family},
+  AddChore: {screen: AddChore}
 });
 
 const styles = StyleSheet.create({
