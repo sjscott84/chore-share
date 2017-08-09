@@ -32,7 +32,7 @@ export default class ListChores extends React.Component {
           <Ionicons name="ios-people-outline" size={40} color="rgb(0,206,209)" onPress={() => navigate('Family')}/>
         </View>
         <ListView dataSource={this.state.dataSource} renderRow={(rowData) => 
-          <Chore what={rowData[0]} when={rowData[1]} id={rowData[2]} /> }/>
+          <Chore onPress={this._onPress.bind(this, rowData[2])} what={rowData[0]} when={rowData[1]} id={rowData[2]} /> }/>
       </View>
     );
   }
@@ -50,6 +50,10 @@ export default class ListChores extends React.Component {
       });
     });
   }
+
+  _onPress(id){
+    this.props.navigation.navigate('ChoreDetail', {id: id});
+  }
 }
 
 class Chore extends React.Component {
@@ -61,7 +65,7 @@ class Chore extends React.Component {
   }
   render() {
     return (
-      <TouchableHighlight onPress={this._onPress}>
+      <TouchableHighlight onPress={this.props.onPress}>
         <View style={styles.chore}>
           <Text>{this.props.what}</Text>
           <Text>{this.props.when}</Text>
@@ -71,6 +75,7 @@ class Chore extends React.Component {
   }
 
   _onPress(){
+    this.props.navigation.navigate('Family');
     console.log('Click');
   }
 }
