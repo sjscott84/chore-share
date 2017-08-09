@@ -40,9 +40,23 @@ export default class ChoreDetail extends React.Component {
         <Text>{this.state.who}</Text>
         <Text>{this.state.what}</Text>
         <Text>{this.state.when}</Text>
-        <Button onPress={() => this.props.navigation.navigate('AddChore')} title="Add a Chore" />
+        <Button onPress={this._delete.bind(this)} title="Delete" />
       </View>
     );
+  }
+
+  _reassign(){
+
+  }
+
+  _changeTime(){
+
+  }
+
+  _delete(){
+    const userId = firebase.auth().currentUser.uid;
+    firebase.database().ref(userId + '/' + this.state.id).remove();
+    this.props.navigation.goBack();
   }
 }
 
