@@ -31,7 +31,7 @@ export default class ListChores extends React.Component {
           <Text style={styles.header}>Sarah</Text>
           <Ionicons name="ios-people-outline" size={40} color="rgb(0,206,209)" onPress={() => navigate('Family')}/>
         </View>
-        <ListView dataSource={this.state.dataSource} renderRow={(rowData) => <Chore what={rowData[0]} when={rowData[1]} key={rowData[2]} />}/>
+        <ListView dataSource={this.state.dataSource} renderRow={(rowData) => <Chore what={rowData[0]} when={rowData[1]} id={rowData[2]} />}/>
       </View>
     );
   }
@@ -55,7 +55,7 @@ class Chore extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      key: this.props.key
+      key: this.props.id
     }
   }
   render() {

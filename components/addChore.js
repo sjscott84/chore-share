@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import * as firebase from 'firebase';
+import DatePicker from 'react-native-datepicker'
 
 export default class AddChore extends React.Component {
   constructor(props){
@@ -8,7 +9,8 @@ export default class AddChore extends React.Component {
     this.state = {
       what: 'Clean Bathroom',
       who: 'Sarah',
-      when: 'Sunday'
+      when: 'Sunday',
+      date: new Date()
     }
   }
   static navigationOptions = {
@@ -23,8 +25,27 @@ export default class AddChore extends React.Component {
         <Text style={styles.label}>Who</Text>
         <TextInput ref='who' style={styles.input} onChangeText={(text) => this.setState({who: text})} value={this.state.who}/>
         <Text style={styles.label}>When</Text>
-        <TextInput ref='when' style={styles.input} onChangeText={(text) => this.setState({when: text})} value={this.state.when}/>
-        <Button onPress={this._onPress.bind(this)} title="Add" />    
+        <DatePicker
+          style={{width: 300}}
+          date={this.state.date}
+          mode="date"
+          placeholder="select date"
+          format="dddd Do MMMM"
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              left: 0,
+              top: 4,
+              marginLeft: 6
+            },
+            dateInput: {
+              marginLeft: 40
+            }
+          }}
+          onDateChange={(date) => {this.setState({when: date, date: date})}} />
+        <Button onPress={this._onPress.bind(this)} title="Add" />
       </View>
     );
   }
