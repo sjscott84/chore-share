@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, ListView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Button, ListView, TouchableHighlight } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'firebase';
 
@@ -31,7 +31,8 @@ export default class ListChores extends React.Component {
           <Text style={styles.header}>Sarah</Text>
           <Ionicons name="ios-people-outline" size={40} color="rgb(0,206,209)" onPress={() => navigate('Family')}/>
         </View>
-        <ListView dataSource={this.state.dataSource} renderRow={(rowData) => <Chore what={rowData[0]} when={rowData[1]} id={rowData[2]} />}/>
+        <ListView dataSource={this.state.dataSource} renderRow={(rowData) => 
+          <Chore what={rowData[0]} when={rowData[1]} id={rowData[2]} /> }/>
       </View>
     );
   }
@@ -60,11 +61,17 @@ class Chore extends React.Component {
   }
   render() {
     return (
-      <View style={styles.chore}>
-        <Text>{this.props.what}</Text>
-        <Text>{this.props.when}</Text>
-      </View>
+      <TouchableHighlight onPress={this._onPress}>
+        <View style={styles.chore}>
+          <Text>{this.props.what}</Text>
+          <Text>{this.props.when}</Text>
+        </View>
+      </TouchableHighlight>
     );
+  }
+
+  _onPress(){
+    console.log('Click');
   }
 }
 
