@@ -49,8 +49,12 @@ export default class ChoreDetail extends React.Component {
           <Text>{this.state.when}</Text>
         </View>
         <View style={styles.commands}>
-          <Button onPress={this._edit.bind(this)} title="Edit" />
-          <Button onPress={this._delete.bind(this)} title="Delete" />
+          <View style={styles.button}>
+            <Button onPress={this._edit.bind(this)} title="Edit" color="#009900" />
+          </View>
+          <View style={styles.button}>
+            <Button onPress={this._delete.bind(this)} title="Delete" color="#FF0000" />
+          </View>
         </View>
       </View>
     );
@@ -77,5 +81,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 10
+  },
+  button: {
+    backgroundColor: 'rgb(255,255,255)',
+    alignItems: 'center',
+    borderColor: 'rgb(229,234,236)',
+    borderWidth: 2,
+    height: 50,
+    width: 150,
+    paddingTop: 3
   }
 });

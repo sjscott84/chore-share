@@ -58,7 +58,7 @@ export default class EditChore extends React.Component {
       who: this.state.who,
       when: this.state.when
     });
-    this.props.navigation.goBack({id: this.state.id});
+    this.props.navigation.navigate('ChoreDetail', {id: this.state.id});
   }
 }
 
