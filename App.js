@@ -16,6 +16,7 @@ import SignIn from './components/signin';
 import Family from './components/family';
 import AddChore from './components/addChore';
 import ChoreDetail from './components/chore';
+import EditChore from './components/editChore';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -62,14 +63,16 @@ const RoutesConfig = StackNavigator({
   ListChores: { screen: ListChores},
   Family: {screen: Family},
   AddChore: {screen: AddChore},
-  ChoreDetail: {screen: ChoreDetail}
+  ChoreDetail: {screen: ChoreDetail},
+  EditChore: {screen: EditChore}
 });
 
 const AuthRoutes = StackNavigator({
   ListChores: { screen: ListChores},
   Family: {screen: Family},
   AddChore: {screen: AddChore},
-  ChoreDetail: {screen: ChoreDetail}
+  ChoreDetail: {screen: ChoreDetail},
+  EditChore: {screen: EditChore}
 });
 
 const styles = StyleSheet.create({
