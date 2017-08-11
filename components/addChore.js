@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Switch, NativeAppEventEmitter } from 'react-native';
 import * as firebase from 'firebase';
 import DatePicker from 'react-native-datepicker';
+import TimePicker from 'react-native-datepicker';
 import Notifications from 'expo';
 //import Permissions from 'expo';
 //import RNCalendarReminders from 'react-native-calendar-reminders';
-//import moment from 'moment';
+import moment from 'moment';
 
 export default class AddChore extends React.Component {
   constructor(props){
@@ -13,14 +14,16 @@ export default class AddChore extends React.Component {
     this.state = {
       what: 'Clean Bathroom',
       who: 'Sarah',
-      when: 'Sunday',
-      notify: false,
-      date: new Date()
+      when: '',
+      time: '',
+      notify: false
     }
   }
 
   componentWillMount() {
     Expo.Notifications.addListener(console.log('We are listening'));
+    const currentDate = new Date();
+    this.setState({when: moment(currentDate).format("dddd Do MMMM YYYY"), time: moment(currentDate).format("HH:mm") })
   }
 
   async componentDidMount() {
@@ -42,10 +45,10 @@ export default class AddChore extends React.Component {
         <TextInput ref='what' style={styles.input} onChangeText={(text) => this.setState({what: text})} value={this.state.what}/>
         <Text style={styles.label}>Who</Text>
         <TextInput ref='who' style={styles.input} onChangeText={(text) => this.setState({who: text})} value={this.state.who}/>
-        <Text style={styles.label}>When</Text>
+        <Text style={styles.label}>Date</Text>
         <DatePicker
           style={{width: 300}}
-          date={this.state.date}
+          date={this.state.when}
           mode="date"
           placeholder="select date"
           format="dddd Do MMMM YYYY"
@@ -63,6 +66,27 @@ export default class AddChore extends React.Component {
             }
           }}
           onDateChange={(date) => {this.setState({when: date, date: date})}} />
+        <Text style={styles.label}>Time</Text>
+        <TimePicker
+          style={{width: 300}}
+          date={this.state.time}
+          mode="time"
+          placeholder="select date"
+          format="HH:mm"
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              left: 0,
+              top: 4,
+              marginLeft: 6
+            },
+            dateInput: {
+              marginLeft: 40
+            }
+          }}
+          onDateChange={(date) => {this.setState({time: date})}} />
         <View style={styles.commands}>
           <Text>Turn on notification?</Text>
           <Switch onValueChange = {this._toggleSwitch.bind(this)} value = {this.state.notify}/>
@@ -81,28 +105,34 @@ export default class AddChore extends React.Component {
   }
 
   _onPress(){
-    //userId = firebase.auth().currentUser.uid
-    //firebase.database().ref(userId).push({
-      //what: this.state.what,
-      //who: this.state.who,
-      //when: this.state.when,
-      //notify: this.state.notify
-    //});
+    userId = firebase.auth().currentUser.uid
+    firebase.database().ref(userId).push({
+      what: this.state.what,
+      who: this.state.who,
+      when: this.state.when,
+      notify: this.state.notify
+    });
     if(this.state.notify){
       const localNotification = {
         title: 'Chore Reminder',
         body: this.state.what
       };
-      let t = new Date();
-      t.setSeconds(t.getSeconds() + 10);
+      let date = new Date();
+      let month = moment(this.state.when, "dddd Do MMMM YYYY").format("MM");
+      let day = moment(this.state.when, "dddd Do MMMM YYYY").format("DD");
+      let hours = parseInt(moment(this.state.time, "HH:mm").format("HH"));
+      let min = parseInt(moment(this.state.time, "HH:mm").format("mm"));
+      date.setMonth(month-1);
+      date.setDate(day);
+      date.setHours(hours);
+      date.setMinutes(min);
       const schedulingOptions = {
-        time: t
+        time: date
       };
       Expo.Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions)
     }
   }
 }
-
 
 const styles = StyleSheet.create({
   container: {
