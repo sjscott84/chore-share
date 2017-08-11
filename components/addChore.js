@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Switch, NativeAppEventEmitter } from 'react-native';
 import * as firebase from 'firebase';
-import DatePicker from 'react-native-datepicker'
+import DatePicker from 'react-native-datepicker';
+import Notifications from 'expo';
+//import Permissions from 'expo';
+//import RNCalendarReminders from 'react-native-calendar-reminders';
+//import moment from 'moment';
 
 export default class AddChore extends React.Component {
   constructor(props){
@@ -10,9 +14,23 @@ export default class AddChore extends React.Component {
       what: 'Clean Bathroom',
       who: 'Sarah',
       when: 'Sunday',
+      notify: false,
       date: new Date()
     }
   }
+
+  componentWillMount() {
+    Expo.Notifications.addListener(console.log('We are listening'));
+  }
+
+  async componentDidMount() {
+    const { Permissions } = Expo;
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    if (status === 'granted') {
+      console.log('We have permission!');
+    }
+  }
+
   static navigationOptions = {
     title: 'Add a Chore',
   };
@@ -30,7 +48,7 @@ export default class AddChore extends React.Component {
           date={this.state.date}
           mode="date"
           placeholder="select date"
-          format="dddd Do MMMM"
+          format="dddd Do MMMM YYYY"
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
           customStyles={{
@@ -45,19 +63,43 @@ export default class AddChore extends React.Component {
             }
           }}
           onDateChange={(date) => {this.setState({when: date, date: date})}} />
+        <View style={styles.commands}>
+          <Text>Turn on notification?</Text>
+          <Switch onValueChange = {this._toggleSwitch.bind(this)} value = {this.state.notify}/>
+        </View>
         <Button onPress={this._onPress.bind(this)} title="Add" />
       </View>
     );
   }
 
+  _toggleSwitch(){
+    if(this.state.notify !== true){
+      this.setState({notify: true});
+    }else{
+      this.setState({notify: false});
+    }
+  }
+
   _onPress(){
-    userId = firebase.auth().currentUser.uid
-    console.log(userId)
-    firebase.database().ref(userId).push({
-      what: this.state.what,
-      who: this.state.who,
-      when: this.state.when
-    });
+    //userId = firebase.auth().currentUser.uid
+    //firebase.database().ref(userId).push({
+      //what: this.state.what,
+      //who: this.state.who,
+      //when: this.state.when,
+      //notify: this.state.notify
+    //});
+    if(this.state.notify){
+      const localNotification = {
+        title: 'Chore Reminder',
+        body: this.state.what
+      };
+      let t = new Date();
+      t.setSeconds(t.getSeconds() + 10);
+      const schedulingOptions = {
+        time: t
+      };
+      Expo.Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions)
+    }
   }
 }
 
@@ -84,5 +126,11 @@ const styles = StyleSheet.create({
     color: 'rgb(52, 73, 76)',
     alignSelf: 'flex-start',
     fontFamily: 'AppleSDGothicNeo-SemiBold'
+  },
+  commands: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 10
   },
 });
