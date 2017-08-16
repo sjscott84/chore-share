@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 import DatePicker from 'react-native-datepicker';
 import TimePicker from 'react-native-datepicker';
 import Notifications from 'expo';
+import { ModifyDate } from '../libraries/helperFunctions';
 //import Permissions from 'expo';
 //import RNCalendarReminders from 'react-native-calendar-reminders';
 import moment from 'moment';
@@ -106,30 +107,31 @@ export default class AddChore extends React.Component {
 
   _onPress(){
     userId = firebase.auth().currentUser.uid
-    firebase.database().ref(userId).push({
-      what: this.state.what,
-      who: this.state.who,
-      when: this.state.when,
-      notify: this.state.notify
-    });
     if(this.state.notify){
       const localNotification = {
         title: 'Chore Reminder',
         body: this.state.what
       };
-      let date = new Date();
-      let month = moment(this.state.when, "dddd Do MMMM YYYY").format("MM");
-      let day = moment(this.state.when, "dddd Do MMMM YYYY").format("DD");
-      let hours = parseInt(moment(this.state.time, "HH:mm").format("HH"));
-      let min = parseInt(moment(this.state.time, "HH:mm").format("mm"));
-      date.setMonth(month-1);
-      date.setDate(day);
-      date.setHours(hours);
-      date.setMinutes(min);
+      let date = ModifyDate(this.state.when, this.state.time);
+      let dateString = date.toString();
+      firebase.database().ref(userId).push({
+        what: this.state.what,
+        who: this.state.who,
+        when: this.state.when,
+        notify: this.state.notify,
+        notifyWhen: dateString
+      });
       const schedulingOptions = {
         time: date
       };
       Expo.Notifications.scheduleLocalNotificationAsync(localNotification, schedulingOptions)
+    } else {
+      firebase.database().ref(userId).push({
+        what: this.state.what,
+        who: this.state.who,
+        when: this.state.when,
+        notify: this.state.notify
+      });
     }
   }
 }
