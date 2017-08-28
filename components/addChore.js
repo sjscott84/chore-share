@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Switch, NativeAppEventEmitter } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Switch, NativeAppEventEmitter, Picker } from 'react-native';
 import * as firebase from 'firebase';
 import DatePicker from 'react-native-datepicker';
 import TimePicker from 'react-native-datepicker';
@@ -17,6 +17,7 @@ export default class AddChore extends React.Component {
       who: 'Sarah',
       when: '',
       time: '',
+      repeat: 'none',
       notify: false
     }
   }
@@ -88,6 +89,15 @@ export default class AddChore extends React.Component {
             }
           }}
           onDateChange={(date) => {this.setState({time: date})}} />
+        <Text style={styles.label}>Repeat?</Text>
+        <Picker
+          selectedValue={this.state.repeat}
+          onValueChange={(itemValue, itemIndex) => this.setState({repeat: itemValue})}>
+          <Picker.Item label="No repeat" value="none" />
+          <Picker.Item label="Weekly" value="week" />
+          <Picker.Item label="FortNightly" value="fortnight" />
+          <Picker.Item label="Monthly" value="month" />
+        </Picker>
         <View style={styles.commands}>
           <Text>Turn on notification?</Text>
           <Switch onValueChange = {this._toggleSwitch.bind(this)} value = {this.state.notify}/>
@@ -119,7 +129,8 @@ export default class AddChore extends React.Component {
         who: this.state.who,
         when: this.state.when,
         notify: this.state.notify,
-        notifyWhen: dateString
+        notifyWhen: dateString,
+        repeat: this.state.repeat
       });
       const schedulingOptions = {
         time: date
@@ -130,7 +141,8 @@ export default class AddChore extends React.Component {
         what: this.state.what,
         who: this.state.who,
         when: this.state.when,
-        notify: this.state.notify
+        notify: this.state.notify,
+        repeat: this.state.repeat
       });
     }
   }
