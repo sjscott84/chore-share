@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, Button, ListView, TouchableHighlight } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'firebase';
+import moment from 'moment';
+import { ModifyDate } from '../libraries/helperFunctions';
 
 export default class ListChores extends React.Component {
   constructor(props){
@@ -12,6 +14,40 @@ export default class ListChores extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2
       })
     }
+  }
+
+  componentWillMount() {
+    userId = firebase.auth().currentUser.uid
+    firebase.database().ref(userId).once('value')
+    .then(function(snap) {
+      snap.forEach((child) => {
+        var today = moment();
+        var schedule = moment(child.val().when, "dddd DDth mmmm YYYY");
+        if(today.diff(schedule) > 0){
+          if(child.val().repeat === "none") {
+            firebase.database().ref(userId + '/' + child.key).remove();
+          } else if (child.val().repeat === "week") {
+            var addWeek = schedule.add(1, 'week').format();
+            var updateWeek = moment(addWeek).format("dddd Do MMMM YYYY");
+            firebase.database().ref(userId + '/' + child.key).update({
+              when: updateWeek
+            });
+          } else if (child.val().repeat === "fortnight") {
+            var addWeek = schedule.add(2, 'week').format();
+            var updateWeek = moment(addWeek).format("dddd Do MMMM YYYY");
+            firebase.database().ref(userId + '/' + child.key).update({
+              when: updateWeek
+            });
+          } else {
+            var addMonth = schedule.add(1, 'month').format();
+            var updateMonth = moment(addMonth).format("dddd Do MMMM YYYY");
+            firebase.database().ref(userId + '/' + child.key).update({
+              when: updateMonth
+            });
+          }
+        }
+      });
+    });
   }
 
   componentDidMount() {
